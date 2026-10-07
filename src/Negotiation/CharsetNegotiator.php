@@ -2,6 +2,9 @@
 
 namespace Negotiation;
 
+/**
+ * @extends AbstractNegotiator<AcceptCharset>
+ */
 class CharsetNegotiator extends AbstractNegotiator
 {
     /**

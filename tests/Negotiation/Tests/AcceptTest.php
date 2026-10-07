@@ -2,11 +2,12 @@
 
 namespace Negotiation\Tests;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Negotiation\Accept;
 
 class AcceptTest extends TestCase
 {
-    public function testGetParameter()
+    public function testGetParameter(): void
     {
         $accept = new Accept('foo/bar; q=1; hello=world');
 
@@ -18,57 +19,57 @@ class AcceptTest extends TestCase
         $this->assertSame('world', $accept->getParameter('hello', 'goodbye'));
     }
 
-    /**
-     * @dataProvider dataProviderForTestGetNormalizedValue
-     */
-    public function testGetNormalizedValue($header, $expected)
+    #[DataProvider('dataProviderForTestGetNormalizedValue')]
+    public function testGetNormalizedValue(string $header, string $expected): void
     {
         $accept = new Accept($header);
         $actual = $accept->getNormalizedValue();
         $this->assertEquals($expected, $actual);
     }
 
-    public static function dataProviderForTestGetNormalizedValue()
+    /**
+     * @return list<array{string, string}>
+     */
+    public static function dataProviderForTestGetNormalizedValue(): array
     {
-        return array(
-            array('text/html; z=y; a=b; c=d', 'text/html; a=b; c=d; z=y'),
-            array('application/pdf; q=1; param=p',  'application/pdf; param=p')
-        );
+        return [
+            ['text/html; z=y; a=b; c=d', 'text/html; a=b; c=d; z=y'],
+            ['application/pdf; q=1; param=p',  'application/pdf; param=p'],
+        ];
     }
 
-    /**
-     * @dataProvider dataProviderForGetType
-     */
-    public function testGetType($header, $expected)
+    #[DataProvider('dataProviderForGetType')]
+    public function testGetType(string $header, string $expected): void
     {
         $accept = new Accept($header);
         $actual = $accept->getType();
         $this->assertEquals($expected, $actual);
     }
 
-    public static function dataProviderForGetType()
+    /**
+     * @return list<array{string, string}>
+     */
+    public static function dataProviderForGetType(): array
     {
-        return array(
-            array('text/html;hello=world', 'text/html'),
-            array('application/pdf', 'application/pdf'),
-            array('application/xhtml+xml;q=0.9', 'application/xhtml+xml'),
-            array('text/plain; q=0.5', 'text/plain'),
-            array('text/html;level=2;q=0.4', 'text/html'),
-            array('text/html ; level = 2   ; q = 0.4', 'text/html'),
-            array('text/*', 'text/*'),
-            array('text/* ;q=1 ;level=2', 'text/*'),
-            array('*/*', '*/*'),
-            array('*', '*/*'),
-            array('*/* ; param=555', '*/*'),
-            array('* ; param=555', '*/*'),
-            array('TEXT/hTmL;leVel=2; Q=0.4', 'text/html'),
-        );
+        return [
+            ['text/html;hello=world', 'text/html'],
+            ['application/pdf', 'application/pdf'],
+            ['application/xhtml+xml;q=0.9', 'application/xhtml+xml'],
+            ['text/plain; q=0.5', 'text/plain'],
+            ['text/html;level=2;q=0.4', 'text/html'],
+            ['text/html ; level = 2   ; q = 0.4', 'text/html'],
+            ['text/*', 'text/*'],
+            ['text/* ;q=1 ;level=2', 'text/*'],
+            ['*/*', '*/*'],
+            ['*', '*/*'],
+            ['*/* ; param=555', '*/*'],
+            ['* ; param=555', '*/*'],
+            ['TEXT/hTmL;leVel=2; Q=0.4', 'text/html'],
+        ];
     }
 
-    /**
-     * @dataProvider dataProviderForGetValue
-     */
-    public function testGetValue($header, $expected)
+    #[DataProvider('dataProviderForGetValue')]
+    public function testGetValue(string $header, string $expected): void
     {
         $accept = new Accept($header);
         $actual = $accept->getValue();
@@ -76,11 +77,14 @@ class AcceptTest extends TestCase
 
     }
 
-    public static function dataProviderForGetValue()
+    /**
+     * @return list<array{string, string}>
+     */
+    public static function dataProviderForGetValue(): array
     {
-        return array(
-            array('text/html;hello=world  ;q=0.5', 'text/html;hello=world  ;q=0.5'),
-            array('application/pdf', 'application/pdf'),
-        );
+        return [
+            ['text/html;hello=world  ;q=0.5', 'text/html;hello=world  ;q=0.5'],
+            ['application/pdf', 'application/pdf'],
+        ];
     }
 }

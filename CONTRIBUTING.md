@@ -6,14 +6,14 @@ First of all, **thank you** for contributing, **you are awesome**!
 Here are a few rules to follow in order to ease code reviews, and discussions before
 maintainers accept and merge your work.
 
-You MUST follow the [PSR-1](http://www.php-fig.org/psr/1/) and
-[PSR-2](http://www.php-fig.org/psr/2/). If you don't know about any of them, you
-should really read the recommendations. Can't wait? Use the [PHP-CS-Fixer
-tool](http://cs.sensiolabs.org/).
+Follow [PER Coding Style 3.0](https://www.php-fig.org/per/coding-style/), enforced
+by the project's PHP CS Fixer configuration. Run `composer cs:fix` to format changes.
 
-You MUST run the test suite.
+Run `composer check` before submitting a pull request. This runs PHPUnit, PHPStan,
+and the coding standard check. Tests and static analysis must pass on PHP 8.2–8.5,
+including the lowest compatible dependency versions (`composer update --prefer-lowest --prefer-stable`).
 
-You MUST write (or update) unit tests.
+Write or update unit tests when changing library behavior.
 
 You SHOULD write documentation.
 

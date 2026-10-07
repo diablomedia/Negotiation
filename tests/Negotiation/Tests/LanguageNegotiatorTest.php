@@ -2,12 +2,12 @@
 
 namespace Negotiation\Tests;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Negotiation\Exception\InvalidArgument;
 use Negotiation\LanguageNegotiator;
 
 class LanguageNegotiatorTest extends TestCase
 {
-
     /**
      * @var LanguageNegotiator
      */
@@ -19,9 +19,10 @@ class LanguageNegotiatorTest extends TestCase
     }
 
     /**
-     * @dataProvider dataProviderForTestGetBest
+     * @param list<string> $priorities
      */
-    public function testGetBest($accept, $priorities, $expected)
+    #[DataProvider('dataProviderForTestGetBest')]
+    public function testGetBest(string $accept, array $priorities, string|\Exception|null $expected): void
     {
         try {
             $accept = $this->negotiator->getBest($accept, $priorities);
@@ -37,50 +38,57 @@ class LanguageNegotiatorTest extends TestCase
         }
     }
 
-    public static function dataProviderForTestGetBest()
+    /**
+     * @return list<array{string, list<string>, string|\Exception|null}>
+     */
+    public static function dataProviderForTestGetBest(): array
     {
-        return array(
-            array('en, de', array('fr'), null),
-            array('foo, bar, yo', array('baz', 'biz'), null),
-            array('fr-FR, en;q=0.8', array('en-US', 'de-DE'), 'en-US'),
-            array('en, *;q=0.9', array('fr'), 'fr'),
-            array('foo, bar, yo', array('yo'), 'yo'),
-            array('en; q=0.1, fr; q=0.4, bu; q=1.0', array('en', 'fr'), 'fr'),
-            array('en; q=0.1, fr; q=0.4, fu; q=0.9, de; q=0.2', array('en', 'fu'), 'fu'),
-            array('', array('en', 'fu'), new InvalidArgument('The header string should not be empty.')),
-            array('fr, zh-Hans-CN;q=0.3', array('fr'), 'fr'),
+        return [
+            ['en, de', ['fr'], null],
+            ['foo, bar, yo', ['baz', 'biz'], null],
+            ['fr-FR, en;q=0.8', ['en-US', 'de-DE'], 'en-US'],
+            ['en, *;q=0.9', ['fr'], 'fr'],
+            ['foo, bar, yo', ['yo'], 'yo'],
+            ['en; q=0.1, fr; q=0.4, bu; q=1.0', ['en', 'fr'], 'fr'],
+            ['en; q=0.1, fr; q=0.4, fu; q=0.9, de; q=0.2', ['en', 'fu'], 'fu'],
+            ['', ['en', 'fu'], new InvalidArgument('The header string should not be empty.')],
+            ['fr, zh-Hans-CN;q=0.3', ['fr'], 'fr'],
             # Quality of source factors
-            array('en;q=0.5,de', array('de;q=0.3', 'en;q=0.9'), 'en;q=0.9'),
+            ['en;q=0.5,de', ['de;q=0.3', 'en;q=0.9'], 'en;q=0.9'],
             # Generic fallback
-            array('fr-FR, en-US;q=0.8', array('fr'), 'fr'),
-            array('fr-FR, en-US;q=0.8', array('fr', 'en-US'), 'fr'),
-            array('fr-FR, en-US;q=0.8', array('fr-CA', 'en'), 'en'),
-        );
+            ['fr-FR, en-US;q=0.8', ['fr'], 'fr'],
+            ['fr-FR, en-US;q=0.8', ['fr', 'en-US'], 'fr'],
+            ['fr-FR, en-US;q=0.8', ['fr-CA', 'en'], 'en'],
+        ];
     }
 
-    public function testGetBestRespectsQualityOfSource()
+    public function testGetBestRespectsQualityOfSource(): void
     {
-        $accept = $this->negotiator->getBest('en;q=0.5,de', array('de;q=0.3', 'en;q=0.9'));
+        $accept = $this->negotiator->getBest('en;q=0.5,de', ['de;q=0.3', 'en;q=0.9']);
         $this->assertInstanceOf('Negotiation\AcceptLanguage', $accept);
         $this->assertEquals('en', $accept->getType());
     }
 
     /**
-     * @dataProvider dataProviderForTestParseHeader
+     * @param list<string> $expected
      */
-    public function testParseHeader($header, $expected)
+    #[DataProvider('dataProviderForTestParseHeader')]
+    public function testParseHeader(string $header, array $expected): void
     {
-        $accepts = $this->call_private_method('Negotiation\Negotiator', 'parseHeader', $this->negotiator, array($header));
+        $accepts = $this->call_private_method('Negotiation\Negotiator', 'parseHeader', $this->negotiator, [$header]);
 
         $this->assertSame($expected, $accepts);
     }
 
-    public static function dataProviderForTestParseHeader()
+    /**
+     * @return list<array{string, list<string>}>
+     */
+    public static function dataProviderForTestParseHeader(): array
     {
-        return array(
-            array('en; q=0.1, fr; q=0.4, bu; q=1.0', array('en; q=0.1', 'fr; q=0.4', 'bu; q=1.0')),
-            array('en; q=0.1, fr; q=0.4, fu; q=0.9, de; q=0.2', array('en; q=0.1', 'fr; q=0.4', 'fu; q=0.9', 'de; q=0.2')),
-        );
+        return [
+            ['en; q=0.1, fr; q=0.4, bu; q=1.0', ['en; q=0.1', 'fr; q=0.4', 'bu; q=1.0']],
+            ['en; q=0.1, fr; q=0.4, fu; q=0.9, de; q=0.2', ['en; q=0.1', 'fr; q=0.4', 'fu; q=0.9', 'de; q=0.2']],
+        ];
     }
 
     /**
@@ -88,10 +96,10 @@ class LanguageNegotiatorTest extends TestCase
      *  And priorities containing a generic version of that language
      * Then the best language is mapped to the generic one here 'fr'
      */
-    public function testSpecificLanguageAreMappedToGeneric()
+    public function testSpecificLanguageAreMappedToGeneric(): void
     {
         $acceptLanguageHeader = 'fr-FR, en-US;q=0.8';
-        $priorities           = array('fr');
+        $priorities           = ['fr'];
 
         $acceptHeader = $this->negotiator->getBest($acceptLanguageHeader, $priorities);
 

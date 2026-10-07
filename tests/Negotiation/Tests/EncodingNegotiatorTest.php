@@ -2,11 +2,11 @@
 
 namespace Negotiation\Tests;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Negotiation\EncodingNegotiator;
 
 class EncodingNegotiatorTest extends TestCase
 {
-
     /**
      * @var EncodingNegotiator
      */
@@ -17,15 +17,16 @@ class EncodingNegotiatorTest extends TestCase
         $this->negotiator = new EncodingNegotiator();
     }
 
-    public function testGetBestReturnsNullWithUnmatchedHeader()
+    public function testGetBestReturnsNullWithUnmatchedHeader(): void
     {
-        $this->assertNull($this->negotiator->getBest('foo, bar, yo', array('baz')));
+        $this->assertNull($this->negotiator->getBest('foo, bar, yo', ['baz']));
     }
 
     /**
-     * @dataProvider dataProviderForTestGetBest
+     * @param list<string> $priorities
      */
-    public function testGetBest($accept, $priorities, $expected)
+    #[DataProvider('dataProviderForTestGetBest')]
+    public function testGetBest(string $accept, array $priorities, ?string $expected): void
     {
         $accept = $this->negotiator->getBest($accept, $priorities);
 
@@ -37,40 +38,47 @@ class EncodingNegotiatorTest extends TestCase
         }
     }
 
-    public static function dataProviderForTestGetBest()
+    /**
+     * @return list<array{string, list<string>, string|null}>
+     */
+    public static function dataProviderForTestGetBest(): array
     {
-        return array(
-            array('gzip;q=1.0, identity; q=0.5, *;q=0', array('identity'), 'identity'),
-            array('gzip;q=0.5, identity; q=0.5, *;q=0.7', array('bzip', 'foo'), 'bzip'),
-            array('gzip;q=0.7, identity; q=0.5, *;q=0.7', array('gzip', 'foo'), 'gzip'),
+        return [
+            ['gzip;q=1.0, identity; q=0.5, *;q=0', ['identity'], 'identity'],
+            ['gzip;q=0.5, identity; q=0.5, *;q=0.7', ['bzip', 'foo'], 'bzip'],
+            ['gzip;q=0.7, identity; q=0.5, *;q=0.7', ['gzip', 'foo'], 'gzip'],
             # Quality of source factors
-            array('gzip;q=0.7,identity', array('identity;q=0.5', 'gzip;q=0.9'), 'gzip;q=0.9'),
-        );
+            ['gzip;q=0.7,identity', ['identity;q=0.5', 'gzip;q=0.9'], 'gzip;q=0.9'],
+        ];
     }
 
-    public function testGetBestRespectsQualityOfSource()
+    public function testGetBestRespectsQualityOfSource(): void
     {
-        $accept = $this->negotiator->getBest('gzip;q=0.7,identity', array('identity;q=0.5', 'gzip;q=0.9'));
+        $accept = $this->negotiator->getBest('gzip;q=0.7,identity', ['identity;q=0.5', 'gzip;q=0.9']);
         $this->assertInstanceOf('Negotiation\AcceptEncoding', $accept);
         $this->assertEquals('gzip', $accept->getType());
     }
 
     /**
-     * @dataProvider dataProviderForTestParseAcceptHeader
+     * @param list<string> $expected
      */
-    public function testParseAcceptHeader($header, $expected)
+    #[DataProvider('dataProviderForTestParseAcceptHeader')]
+    public function testParseAcceptHeader(string $header, array $expected): void
     {
-        $accepts = $this->call_private_method('Negotiation\Negotiator', 'parseHeader', $this->negotiator, array($header));
+        $accepts = $this->call_private_method('Negotiation\Negotiator', 'parseHeader', $this->negotiator, [$header]);
 
         $this->assertSame($expected, $accepts);
     }
 
-    public static function dataProviderForTestParseAcceptHeader()
+    /**
+     * @return list<array{string, list<string>}>
+     */
+    public static function dataProviderForTestParseAcceptHeader(): array
     {
-        return array(
-            array('gzip,deflate,sdch', array('gzip', 'deflate', 'sdch')),
-            array("gzip, deflate\t,sdch", array('gzip', 'deflate', 'sdch')),
-            array('gzip;q=1.0, identity; q=0.5, *;q=0', array('gzip;q=1.0', 'identity; q=0.5', '*;q=0')),
-        );
+        return [
+            ['gzip,deflate,sdch', ['gzip', 'deflate', 'sdch']],
+            ["gzip, deflate\t,sdch", ['gzip', 'deflate', 'sdch']],
+            ['gzip;q=1.0, identity; q=0.5, *;q=0', ['gzip;q=1.0', 'identity; q=0.5', '*;q=0']],
+        ];
     }
 }

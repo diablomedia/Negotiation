@@ -6,8 +6,9 @@ use Negotiation\Exception\InvalidLanguage;
 
 final class AcceptLanguage extends BaseAccept implements AcceptHeader
 {
+    /** @var string */
     private $language;
-    private $script;
+    /** @var string|null */
     private $region;
 
     public function __construct($value)
@@ -23,16 +24,14 @@ final class AcceptLanguage extends BaseAccept implements AcceptHeader
             $this->language = $parts[0];
         } elseif (3 === count($parts)) {
             $this->language = $parts[0];
-            $this->script   = $parts[1];
             $this->region   = $parts[2];
         } else {
-            // TODO: this part is never reached...
             throw new InvalidLanguage();
         }
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getSubPart()
     {

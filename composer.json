@@ -1,9 +1,15 @@
 {
-    "name": "willdurand/negotiation",
+    "name": "diablomedia/negotiation",
     "description": "Content Negotiation tools for PHP provided as a standalone library.",
-    "keywords": [ "content", "negotiation", "format", "accept", "header" ],
+    "keywords": [
+        "content",
+        "negotiation",
+        "format",
+        "accept",
+        "header"
+    ],
     "license": "MIT",
-    "homepage": "http://williamdurand.fr/Negotiation/",
+    "homepage": "https://github.com/diablomedia/Negotiation",
     "authors": [
         {
             "name": "William Durand",
@@ -11,13 +17,17 @@
         }
     ],
     "require": {
-        "php": ">=7.1.0"
+        "php": "~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0"
     },
     "autoload": {
-        "psr-4": { "Negotiation\\": "src/Negotiation" }
+        "psr-4": {
+            "Negotiation\\": "src/Negotiation"
+        }
     },
     "autoload-dev": {
-        "psr-4": { "Negotiation\\Tests\\": "tests/Negotiation/Tests" }
+        "psr-4": {
+            "Negotiation\\Tests\\": "tests/Negotiation/Tests"
+        }
     },
     "extra": {
         "branch-alias": {
@@ -25,6 +35,22 @@
         }
     },
     "require-dev": {
-        "symfony/phpunit-bridge": "^5.0"
+        "friendsofphp/php-cs-fixer": "^3.95.27",
+        "phpstan/phpstan": "^2.3",
+        "phpunit/phpunit": "^11.5.57 || ^12.5.38 || ^13.4.1"
+    },
+    "replace": {
+        "willdurand/negotiation": "self.version"
+    },
+    "scripts": {
+        "test": "@php vendor/bin/phpunit",
+        "analyse": "@php vendor/bin/phpstan analyse --memory-limit=512M",
+        "cs:check": "@php vendor/bin/php-cs-fixer fix --dry-run --diff --sequential",
+        "cs:fix": "@php vendor/bin/php-cs-fixer fix --sequential",
+        "check": [
+            "@test",
+            "@analyse",
+            "@cs:check"
+        ]
     }
 }

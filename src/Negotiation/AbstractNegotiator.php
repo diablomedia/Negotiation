@@ -5,13 +5,17 @@ namespace Negotiation;
 use Negotiation\Exception\InvalidArgument;
 use Negotiation\Exception\InvalidHeader;
 
+/**
+ * @template T of AcceptHeader
+ */
 abstract class AbstractNegotiator
 {
     /**
      * @param string $header     A string containing an `Accept|Accept-*` header.
-     * @param array  $priorities A set of server priorities.
+     * @param array<string> $priorities A set of server priorities.
+     * @param bool $strict Whether invalid header parts should throw an exception.
      *
-     * @return AcceptHeader|null best matching type
+     * @return T|null best matching type
      */
     public function getBest($header, array $priorities, $strict = false)
     {
@@ -28,7 +32,7 @@ abstract class AbstractNegotiator
         // PHP bug [55416](https://bugs.php.net/bug.php?id=55416). Now, they
         // are gone.
         // See: https://github.com/willdurand/Negotiation/issues/81
-        $acceptedHeaders = array();
+        $acceptedHeaders = [];
         foreach ($this->parseHeader($header) as $h) {
             try {
                 $acceptedHeaders[] = $this->acceptFactory($h);
@@ -38,7 +42,7 @@ abstract class AbstractNegotiator
                 }
             }
         }
-        $acceptedPriorities = array();
+        $acceptedPriorities = [];
         foreach ($priorities as $p) {
             $acceptedPriorities[] = $this->acceptFactory($p);
         }
@@ -55,7 +59,7 @@ abstract class AbstractNegotiator
     /**
      * @param string $header A string containing an `Accept|Accept-*` header.
      *
-     * @return AcceptHeader[] An ordered list of accept header elements
+     * @return list<T> An ordered list of accept header elements
      */
     public function getOrderedElements($header)
     {
@@ -63,8 +67,8 @@ abstract class AbstractNegotiator
             throw new InvalidArgument('The header string should not be empty.');
         }
 
-        $elements = array();
-        $orderKeys = array();
+        $elements = [];
+        $orderKeys = [];
         foreach ($this->parseHeader($header) as $key => $h) {
             try {
                 $element = $this->acceptFactory($h);
@@ -100,7 +104,7 @@ abstract class AbstractNegotiator
     /**
      * @param string $header accept header part or server priority
      *
-     * @return AcceptHeader Parsed header object
+     * @return T Parsed header object
      */
     abstract protected function acceptFactory($header);
 
@@ -130,7 +134,7 @@ abstract class AbstractNegotiator
     /**
      * @param string $header A string that contains an `Accept*` header.
      *
-     * @return AcceptHeader[]
+     * @return list<string>
      */
     private function parseHeader($header)
     {
@@ -144,10 +148,10 @@ abstract class AbstractNegotiator
     }
 
     /**
-     * @param AcceptHeader[] $headerParts
-     * @param Priority[]     $priorities  Configured priorities
+     * @param list<AcceptHeader> $headerParts
+     * @param list<AcceptHeader> $priorities  Configured priorities
      *
-     * @return AcceptMatch[] Headers matched
+     * @return list<AcceptMatch> Headers matched
      */
     private function findMatches(array $headerParts, array $priorities)
     {

@@ -15,12 +15,12 @@ abstract class BaseAccept
     private $normalized;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $value;
 
     /**
-     * @var array
+     * @var array<string, string>
      */
     private $parameters;
 
@@ -30,7 +30,7 @@ abstract class BaseAccept
     protected $type;
 
     /**
-     * @param string $value
+     * @param string|null $value
      */
     public function __construct($value)
     {
@@ -58,7 +58,7 @@ abstract class BaseAccept
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getValue()
     {
@@ -82,7 +82,7 @@ abstract class BaseAccept
     }
 
     /**
-     * @return array
+     * @return array<string, string>
      */
     public function getParameters()
     {
@@ -90,10 +90,11 @@ abstract class BaseAccept
     }
 
     /**
+     * @template T
      * @param string $key
-     * @param mixed  $default
+     * @param T $default
      *
-     * @return string|null
+     * @return string|T
      */
     public function getParameter($key, $default = null)
     {
@@ -113,7 +114,7 @@ abstract class BaseAccept
     /**
      *
      * @param  string|null $acceptPart
-     * @return array
+     * @return array{string, array<string, string>}
      */
     private function parseParameters($acceptPart)
     {
@@ -140,7 +141,7 @@ abstract class BaseAccept
     }
 
     /**
-     * @param string $parameters
+     * @param array<string, string> $parameters
      *
      * @return string
      */

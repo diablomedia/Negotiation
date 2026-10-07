@@ -1,11 +1,11 @@
 Negotiation
 ===========
 
-[![GitHub Actions](https://github.com/willdurand/Negotiation/workflows/ci/badge.svg)](https://github.com/willdurand/Negotiation/actions?query=workflow%3A%22ci%22+branch%3Amaster)
+[![GitHub Actions](https://github.com/diablomedia/Negotiation/actions/workflows/ci.yaml/badge.svg)](https://github.com/diablomedia/Negotiation/actions/workflows/ci.yaml)
 [![Total
-Downloads](https://poser.pugx.org/willdurand/Negotiation/downloads.png)](https://packagist.org/packages/willdurand/Negotiation)
+Downloads](https://poser.pugx.org/diablomedia/negotiation/downloads.png)](https://packagist.org/packages/diablomedia/negotiation)
 [![Latest Stable
-Version](https://poser.pugx.org/willdurand/Negotiation/v/stable.png)](https://packagist.org/packages/willdurand/Negotiation)
+Version](https://poser.pugx.org/diablomedia/negotiation/v/stable.png)](https://packagist.org/packages/diablomedia/negotiation)
 
 **Negotiation** is a standalone library without any dependencies that allows you
 to implement [content
@@ -14,7 +14,9 @@ application, whatever framework you use.  This library is based on [RFC
 7231](https://tools.ietf.org/html/rfc7231). Negotiation is easy to use, and
 extensively unit tested!
 
-> **Important:** You are browsing the documentation of Negotiation **3.x**+.
+This is the Diablo Media fork of [William Durand's Negotiation](https://github.com/willdurand/Negotiation), maintained as `diablomedia/negotiation`. It supports PHP 8.2–8.5 and keeps the `Negotiation\` namespace.
+
+> The following documentation links describe historical upstream releases:
 >
 > Documentation for version **1.x** is available here: [Negotiation 1.x
 > documentation](https://github.com/willdurand/Negotiation/blob/1.x/README.md#usage).
@@ -30,7 +32,7 @@ The recommended way to install Negotiation is through
 [Composer](http://getcomposer.org/):
 
 ```bash
-$ composer require willdurand/negotiation
+$ composer require diablomedia/negotiation
 ```
 
 
@@ -128,40 +130,58 @@ Versioning
 
 Negotiation follows [Semantic Versioning](http://semver.org/).
 
-### End Of Life
+The upstream 1.x and 2.x releases are no longer supported. This fork is based
+on the upstream 3.x library. Its Composer metadata replaces the upstream package
+at the fork's own version (`self.version`).
 
-#### 1.x
+Development
+-----------
 
-As of October 2016, [branch
-`1.x`](https://github.com/willdurand/Negotiation/tree/1.x) is not supported
-anymore, meaning major version `1` reached end of life. Last version is:
-[1.5.0](https://github.com/willdurand/Negotiation/releases/tag/1.5.0).
+Install the development dependencies:
 
-#### 2.x
+```bash
+composer install
+```
 
-As of November 2020, [branch
-`2.x`](https://github.com/willdurand/Negotiation/tree/2.x) is not supported
-anymore, meaning major version `2` reached end of life. Last version is:
-[2.3.1](https://github.com/willdurand/Negotiation/releases/tag/v2.3.1).
+Run all quality checks:
 
-### Stable Version
+```bash
+composer check
+```
 
-#### 3.x (and `dev-master`)
+Individual commands are also available:
 
-Negotiation [3.0](https://github.com/willdurand/Negotiation/releases/tag/3.0.0)
-has been released on November 26th, 2020. This is the **current stable version**
-and it is in sync with the main branch (a.k.a. `master`).
+```bash
+composer test      # PHPUnit
+composer analyse  # PHPStan (level 8)
+composer cs:check  # Check PER Coding Style 3.0
+composer cs:fix    # Apply the coding standard
+```
 
-Unit Tests
-----------
+CI runs these checks on PHP 8.2, 8.3, 8.4, and 8.5 with both the highest and
+lowest compatible dependencies. To reproduce a lowest-dependency run locally:
 
-Setup the test suite using Composer:
+```bash
+composer update --prefer-lowest --prefer-stable
+composer check
+```
 
-    $ composer install --dev
+Use `composer update --prefer-stable` to restore the latest compatible dependencies.
+Composer selects PHPUnit 11 on PHP 8.2, PHPUnit 12 on PHP 8.3, and PHPUnit 13
+on PHP 8.4 and 8.5 for highest-dependency runs.
 
-Run it using PHPUnit:
 
-    $ phpunit
+The CI security job runs zizmor to audit GitHub Actions and fails on findings.
+To run it locally, use `uvx zizmor .github` (or `zizmor .github` if installed).
+Dependabot checks Composer packages and GitHub Actions weekly and groups minor
+and patch version updates for each ecosystem; major updates get separate PRs.
+Version updates have a seven-day cooldown to satisfy the zizmor audit; security
+updates are not delayed by this cooldown.
+
+CI generates a Clover coverage report and uploads the PHP 8.5 highest-dependency
+report to Codecov. Enable this repository in Codecov and add its upload token as
+the repository or organization Actions secret `CODECOV_TOKEN`. Public fork pull
+requests can upload without that secret using Codecov's tokenless fork support.
 
 
 Contributing

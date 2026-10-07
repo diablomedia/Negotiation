@@ -2,6 +2,9 @@
 
 namespace Negotiation;
 
+/**
+ * @extends AbstractNegotiator<AcceptEncoding>
+ */
 class EncodingNegotiator extends AbstractNegotiator
 {
     /**

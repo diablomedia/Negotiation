@@ -2,55 +2,62 @@
 
 namespace Negotiation\Tests;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Negotiation\AcceptMatch;
 
 class MatchTest extends TestCase
 {
-    /**
-     * @dataProvider dataProviderForTestCompare
-     */
-    public function testCompare($match1, $match2, $expected)
+    #[DataProvider('dataProviderForTestCompare')]
+    public function testCompare(AcceptMatch $match1, AcceptMatch $match2, int $expected): void
     {
         $this->assertEquals($expected, AcceptMatch::compare($match1, $match2));
     }
 
-    public static function dataProviderForTestCompare()
+    /**
+     * @return list<array{AcceptMatch, AcceptMatch, int}>
+     */
+    public static function dataProviderForTestCompare(): array
     {
-        return array(
-            array(new AcceptMatch(1.0, 110, 1), new AcceptMatch(1.0, 111, 1),    0),
-            array(new AcceptMatch(0.1, 10,  1), new AcceptMatch(0.1,  10, 2),   -1),
-            array(new AcceptMatch(0.5, 110, 5), new AcceptMatch(0.5,  11, 4),    1),
-            array(new AcceptMatch(0.4, 110, 1), new AcceptMatch(0.6, 111, 3),    1),
-            array(new AcceptMatch(0.6, 110, 1), new AcceptMatch(0.4, 111, 3),   -1),
-        );
+        return [
+            [new AcceptMatch(1.0, 110, 1), new AcceptMatch(1.0, 111, 1),    0],
+            [new AcceptMatch(0.1, 10, 1), new AcceptMatch(0.1, 10, 2),   -1],
+            [new AcceptMatch(0.5, 110, 5), new AcceptMatch(0.5, 11, 4),    1],
+            [new AcceptMatch(0.4, 110, 1), new AcceptMatch(0.6, 111, 3),    1],
+            [new AcceptMatch(0.6, 110, 1), new AcceptMatch(0.4, 111, 3),   -1],
+        ];
     }
 
     /**
-     * @dataProvider dataProviderForTestReduce
+     * @param array<int, AcceptMatch> $carry
+     * @param array<int, AcceptMatch> $expected
      */
-    public function testReduce($carry, $match, $expected)
+    #[DataProvider('dataProviderForTestReduce')]
+    public function testReduce(array $carry, AcceptMatch $match, array $expected): void
     {
         $this->assertEquals($expected, AcceptMatch::reduce($carry, $match));
     }
 
-    public static function dataProviderForTestReduce()
+    /**
+     * @return list<array{array<int, AcceptMatch>, AcceptMatch, array<int, AcceptMatch>}>
+     */
+    public static function dataProviderForTestReduce(): array
     {
-        return array(
-            array(
-                array(1 => new AcceptMatch(1.0, 10, 1)),
+        return [
+            [
+                [1 => new AcceptMatch(1.0, 10, 1)],
                 new AcceptMatch(0.5, 111, 1),
-                array(1 => new AcceptMatch(0.5, 111, 1)),
-            ),
-            array(
-                array(1 => new AcceptMatch(1.0, 110, 1)),
+                [1 => new AcceptMatch(0.5, 111, 1)],
+            ],
+            [
+                [1 => new AcceptMatch(1.0, 110, 1)],
                 new AcceptMatch(0.5, 11, 1),
-                array(1 => new AcceptMatch(1.0, 110, 1)),
-            ),
-            array(
-                array(0 => new AcceptMatch(1.0, 10, 1)),
+                [1 => new AcceptMatch(1.0, 110, 1)],
+            ],
+            [
+                [0 => new AcceptMatch(1.0, 10, 1)],
                 new AcceptMatch(0.5, 111, 1),
-                array(0 => new AcceptMatch(1.0, 10, 1), 1 => new AcceptMatch(0.5, 111, 1)),
-            ),
-        );
+                [0 => new AcceptMatch(1.0, 10, 1), 1 => new AcceptMatch(0.5, 111, 1)],
+            ],
+        ];
     }
 }

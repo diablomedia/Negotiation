@@ -6,8 +6,10 @@ use Negotiation\Exception\InvalidMediaType;
 
 final class Accept extends BaseAccept implements AcceptHeader
 {
+    /** @var string */
     private $basePart;
 
+    /** @var string */
     private $subPart;
 
     public function __construct($value)

@@ -19,6 +19,11 @@ final class AcceptMatch
      */
     public $index;
 
+    /**
+     * @param float $quality
+     * @param int $score
+     * @param int $index
+     */
     public function __construct($quality, $score, $index)
     {
         $this->quality = $quality;
@@ -46,7 +51,7 @@ final class AcceptMatch
     }
 
     /**
-     * @param array   $carry reduced array
+     * @param array<int, AcceptMatch> $carry reduced array
      * @param AcceptMatch $match match to be reduced
      *
      * @return AcceptMatch[]

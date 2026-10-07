@@ -2,14 +2,27 @@
 
 namespace Negotiation\Tests;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Negotiation\BaseAccept;
 
 class BaseAcceptTest extends TestCase
 {
+    public function testNullValue(): void
+    {
+        $accept = new DummyAccept(null);
+
+        $this->assertNull($accept->getValue());
+        $this->assertSame('', $accept->getType());
+        $this->assertSame('', $accept->getNormalizedValue());
+        $this->assertSame([], $accept->getParameters());
+        $this->assertSame(1.0, $accept->getQuality());
+    }
+
     /**
-     * @dataProvider dataProviderForParseParameters
+     * @param array<string, float|int|string> $expected
      */
-    public function testParseParameters($value, $expected)
+    #[DataProvider('dataProviderForParseParameters')]
+    public function testParseParameters(string $value, array $expected): void
     {
         $accept     = new DummyAccept($value);
         $parameters = $accept->getParameters();
@@ -28,57 +41,58 @@ class BaseAcceptTest extends TestCase
         }
     }
 
-    public static function dataProviderForParseParameters()
+    /**
+     * @return list<array{string, array<string, float|int|string>}>
+     */
+    public static function dataProviderForParseParameters(): array
     {
-        return array(
-            array(
+        return [
+            [
                 'application/json ;q=1.0; level=2;foo= bar',
-                array(
+                [
                     'q' => 1.0,
                     'level' => 2,
                     'foo'   => 'bar',
-                ),
-            ),
-            array(
+                ],
+            ],
+            [
                 'application/json ;q = 1.0; level = 2;     FOO  = bAr',
-                array(
+                [
                     'q' => 1.0,
                     'level' => 2,
                     'foo'   => 'bAr',
-                ),
-            ),
-            array(
+                ],
+            ],
+            [
                 'application/json;q=1.0',
-                array(
+                [
                     'q' => 1.0,
-                ),
-            ),
-            array(
+                ],
+            ],
+            [
                 'application/json;foo',
-                array(),
-            ),
-        );
+                [],
+            ],
+        ];
     }
 
-    /**
-     * @dataProvider dataProviderBuildParametersString
-     */
-
-    public function testBuildParametersString($value, $expected)
+    #[DataProvider('dataProviderBuildParametersString')]
+    public function testBuildParametersString(string $value, string $expected): void
     {
         $accept = new DummyAccept($value);
 
         $this->assertEquals($expected, $accept->getNormalizedValue());
     }
 
-    public static function dataProviderBuildParametersString()
+    /**
+     * @return list<array{string, string}>
+     */
+    public static function dataProviderBuildParametersString(): array
     {
-        return array(
-            array('media/type; xxx = 1.0;level=2;foo=bar', 'media/type; foo=bar; level=2; xxx=1.0'),
-        );
+        return [
+            ['media/type; xxx = 1.0;level=2;foo=bar', 'media/type; foo=bar; level=2; xxx=1.0'],
+        ];
     }
 }
 
-class DummyAccept extends BaseAccept
-{
-}
+class DummyAccept extends BaseAccept {}

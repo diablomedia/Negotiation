@@ -2,6 +2,9 @@
 
 namespace Negotiation;
 
+/**
+ * @extends AbstractNegotiator<Accept>
+ */
 class Negotiator extends AbstractNegotiator
 {
     /**
@@ -77,6 +80,9 @@ class Negotiator extends AbstractNegotiator
      * For media-types of the form "application/vnd.example+json", matching
      * should allow wildcards for either the portion before the "+" or
      * after. This method splits the subpart to allow such matching.
+     *
+     * @param string $subPart
+     * @return list<string>
      */
     protected function splitSubPart($subPart)
     {
