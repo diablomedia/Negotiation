@@ -54,7 +54,7 @@
             "@cs:check",
             "@rector:check"
         ],
-        "rector:check": "@php vendor/bin/rector process --dry-run",
+        "rector:check": "@php vendor/bin/rector process --dry-run --clear-cache",
         "rector:fix": "@php vendor/bin/rector process"
     }
 }

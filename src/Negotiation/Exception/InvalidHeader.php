@@ -2,4 +2,6 @@
 
 namespace Negotiation\Exception;
 
-class InvalidHeader extends \RuntimeException implements Exception {}
+use RuntimeException;
+
+class InvalidHeader extends RuntimeException implements Exception {}

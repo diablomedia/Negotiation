@@ -11,7 +11,8 @@ by the project's PHP CS Fixer configuration. Run `composer cs:fix` to format cha
 
 Run `composer check` before submitting a pull request. This runs PHPUnit, PHPStan,
 the coding standard check, and a Rector dry run. Use `composer rector:fix` to apply
-refactorings, then `composer cs:fix` to format them. Tests and static analysis must pass on PHP 8.2–8.5,
+refactorings, then `composer cs:fix` to format them. Tests and static analysis must
+pass on PHP 8.2–8.5,
 including the lowest compatible dependency versions (`composer update --prefer-lowest --prefer-stable`).
 
 Write or update unit tests when changing library behavior.

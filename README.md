@@ -152,10 +152,10 @@ composer check
 Individual commands are also available:
 
 ```bash
-composer test          # PHPUnit
-composer analyse       # PHPStan (level 8)
-composer cs:check      # Check PER Coding Style 3.0
-composer cs:fix        # Apply the coding standard
+composer test         # PHPUnit
+composer analyse      # PHPStan (level 8)
+composer cs:check     # Check PER Coding Style 3.0
+composer cs:fix       # Apply the coding standard
 composer rector:check # Rector dry run
 composer rector:fix   # Apply Rector refactorings
 ```
