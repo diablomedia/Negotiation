@@ -152,11 +152,16 @@ composer check
 Individual commands are also available:
 
 ```bash
-composer test      # PHPUnit
-composer analyse  # PHPStan (level 8)
-composer cs:check  # Check PER Coding Style 3.0
-composer cs:fix    # Apply the coding standard
+composer test          # PHPUnit
+composer analyse       # PHPStan (level 8)
+composer cs:check      # Check PER Coding Style 3.0
+composer cs:fix        # Apply the coding standard
+composer rector:check # Rector dry run
+composer rector:fix   # Apply Rector refactorings
 ```
+
+Rector targets PHP 8.2, the minimum supported version, and processes source and
+test files. `composer check` includes its dry run.
 
 CI runs these checks on PHP 8.2, 8.3, 8.4, and 8.5 with both the highest and
 lowest compatible dependencies. To reproduce a lowest-dependency run locally:

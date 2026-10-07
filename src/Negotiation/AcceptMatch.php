@@ -5,31 +5,11 @@ namespace Negotiation;
 final class AcceptMatch
 {
     /**
-     * @var float
-     */
-    public $quality;
-
-    /**
-     * @var int
-     */
-    public $score;
-
-    /**
-     * @var int
-     */
-    public $index;
-
-    /**
      * @param float $quality
      * @param int $score
      * @param int $index
      */
-    public function __construct($quality, $score, $index)
-    {
-        $this->quality = $quality;
-        $this->score   = $score;
-        $this->index   = $index;
-    }
+    public function __construct(public $quality, public $score, public $index) {}
 
     /**
      * @param AcceptMatch $a

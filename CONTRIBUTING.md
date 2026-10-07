@@ -10,7 +10,8 @@ Follow [PER Coding Style 3.0](https://www.php-fig.org/per/coding-style/), enforc
 by the project's PHP CS Fixer configuration. Run `composer cs:fix` to format changes.
 
 Run `composer check` before submitting a pull request. This runs PHPUnit, PHPStan,
-and the coding standard check. Tests and static analysis must pass on PHP 8.2–8.5,
+the coding standard check, and a Rector dry run. Use `composer rector:fix` to apply
+refactorings, then `composer cs:fix` to format them. Tests and static analysis must pass on PHP 8.2–8.5,
 including the lowest compatible dependency versions (`composer update --prefer-lowest --prefer-stable`).
 
 Write or update unit tests when changing library behavior.

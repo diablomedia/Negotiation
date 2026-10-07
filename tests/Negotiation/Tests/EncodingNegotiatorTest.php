@@ -2,6 +2,8 @@
 
 namespace Negotiation\Tests;
 
+use Negotiation\AcceptEncoding;
+use Negotiation\Negotiator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Negotiation\EncodingNegotiator;
 
@@ -33,7 +35,7 @@ class EncodingNegotiatorTest extends TestCase
         if (null === $accept) {
             $this->assertNull($expected);
         } else {
-            $this->assertInstanceOf('Negotiation\AcceptEncoding', $accept);
+            $this->assertInstanceOf(AcceptEncoding::class, $accept);
             $this->assertEquals($expected, $accept->getValue());
         }
     }
@@ -55,7 +57,7 @@ class EncodingNegotiatorTest extends TestCase
     public function testGetBestRespectsQualityOfSource(): void
     {
         $accept = $this->negotiator->getBest('gzip;q=0.7,identity', ['identity;q=0.5', 'gzip;q=0.9']);
-        $this->assertInstanceOf('Negotiation\AcceptEncoding', $accept);
+        $this->assertInstanceOf(AcceptEncoding::class, $accept);
         $this->assertEquals('gzip', $accept->getType());
     }
 
@@ -65,7 +67,7 @@ class EncodingNegotiatorTest extends TestCase
     #[DataProvider('dataProviderForTestParseAcceptHeader')]
     public function testParseAcceptHeader(string $header, array $expected): void
     {
-        $accepts = $this->call_private_method('Negotiation\Negotiator', 'parseHeader', $this->negotiator, [$header]);
+        $accepts = $this->call_private_method(Negotiator::class, 'parseHeader', $this->negotiator, [$header]);
 
         $this->assertSame($expected, $accepts);
     }

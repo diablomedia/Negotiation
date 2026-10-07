@@ -2,6 +2,10 @@
 
 namespace Negotiation\Tests;
 
+use Exception;
+use Negotiation\AcceptLanguage;
+use Negotiation\Negotiator;
+use Negotiation\AcceptHeader;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Negotiation\Exception\InvalidArgument;
 use Negotiation\LanguageNegotiator;
@@ -22,7 +26,7 @@ class LanguageNegotiatorTest extends TestCase
      * @param list<string> $priorities
      */
     #[DataProvider('dataProviderForTestGetBest')]
-    public function testGetBest(string $accept, array $priorities, string|\Exception|null $expected): void
+    public function testGetBest(string $accept, array $priorities, string|Exception|null $expected): void
     {
         try {
             $accept = $this->negotiator->getBest($accept, $priorities);
@@ -30,16 +34,16 @@ class LanguageNegotiatorTest extends TestCase
             if (null === $accept) {
                 $this->assertNull($expected);
             } else {
-                $this->assertInstanceOf('Negotiation\AcceptLanguage', $accept);
+                $this->assertInstanceOf(AcceptLanguage::class, $accept);
                 $this->assertEquals($expected, $accept->getValue());
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->assertEquals($expected, $e);
         }
     }
 
     /**
-     * @return list<array{string, list<string>, string|\Exception|null}>
+     * @return list<array{string, list<string>, string|Exception|null}>
      */
     public static function dataProviderForTestGetBest(): array
     {
@@ -65,7 +69,7 @@ class LanguageNegotiatorTest extends TestCase
     public function testGetBestRespectsQualityOfSource(): void
     {
         $accept = $this->negotiator->getBest('en;q=0.5,de', ['de;q=0.3', 'en;q=0.9']);
-        $this->assertInstanceOf('Negotiation\AcceptLanguage', $accept);
+        $this->assertInstanceOf(AcceptLanguage::class, $accept);
         $this->assertEquals('en', $accept->getType());
     }
 
@@ -75,7 +79,7 @@ class LanguageNegotiatorTest extends TestCase
     #[DataProvider('dataProviderForTestParseHeader')]
     public function testParseHeader(string $header, array $expected): void
     {
-        $accepts = $this->call_private_method('Negotiation\Negotiator', 'parseHeader', $this->negotiator, [$header]);
+        $accepts = $this->call_private_method(Negotiator::class, 'parseHeader', $this->negotiator, [$header]);
 
         $this->assertSame($expected, $accepts);
     }
@@ -103,7 +107,7 @@ class LanguageNegotiatorTest extends TestCase
 
         $acceptHeader = $this->negotiator->getBest($acceptLanguageHeader, $priorities);
 
-        $this->assertInstanceOf('Negotiation\AcceptHeader', $acceptHeader);
+        $this->assertInstanceOf(AcceptHeader::class, $acceptHeader);
         $this->assertEquals('fr', $acceptHeader->getValue());
     }
 }

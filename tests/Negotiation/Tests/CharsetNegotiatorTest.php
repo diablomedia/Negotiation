@@ -2,6 +2,8 @@
 
 namespace Negotiation\Tests;
 
+use Negotiation\AcceptCharset;
+use Negotiation\Exception\InvalidArgument;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Negotiation\CharsetNegotiator;
 
@@ -33,7 +35,7 @@ class CharsetNegotiatorTest extends TestCase
         $acceptCharset = 'en; q=0.1, fr; q=0.4, bu; q=1.0';
         $accept        = $this->negotiator->getBest($acceptCharset, ['en', 'fr']);
 
-        $this->assertInstanceOf('Negotiation\AcceptCharset', $accept);
+        $this->assertInstanceOf(AcceptCharset::class, $accept);
         $this->assertEquals('fr', $accept->getValue());
     }
 
@@ -44,14 +46,14 @@ class CharsetNegotiatorTest extends TestCase
     public function testGetBest(string $accept, array $priorities, ?string $expected): void
     {
         if (is_null($expected)) {
-            $this->expectException('Negotiation\Exception\InvalidArgument');
+            $this->expectException(InvalidArgument::class);
         }
 
         $accept = $this->negotiator->getBest($accept, $priorities);
         if (null === $accept) {
             $this->assertNull($expected);
         } else {
-            $this->assertInstanceOf('Negotiation\AcceptCharset', $accept);
+            $this->assertInstanceOf(AcceptCharset::class, $accept);
             $this->assertSame($expected, $accept->getValue());
         }
     }
@@ -85,7 +87,7 @@ class CharsetNegotiatorTest extends TestCase
     {
         $accept = $this->negotiator->getBest('foo, bar, yo', ['yo']);
 
-        $this->assertInstanceOf('Negotiation\AcceptCharset', $accept);
+        $this->assertInstanceOf(AcceptCharset::class, $accept);
         $this->assertEquals('yo', $accept->getValue());
     }
 
@@ -100,7 +102,7 @@ class CharsetNegotiatorTest extends TestCase
     public function testGetBestRespectsQualityOfSource(): void
     {
         $accept = $this->negotiator->getBest('utf-8;q=0.5,iso-8859-1', ['iso-8859-1;q=0.3', 'utf-8;q=0.9', 'utf-16;q=1.0']);
-        $this->assertInstanceOf('Negotiation\AcceptCharset', $accept);
+        $this->assertInstanceOf(AcceptCharset::class, $accept);
         $this->assertEquals('utf-8', $accept->getType());
     }
 
@@ -110,7 +112,7 @@ class CharsetNegotiatorTest extends TestCase
     #[DataProvider('dataProviderForTestParseHeader')]
     public function testParseHeader(string $header, array $expected): void
     {
-        $accepts = $this->call_private_method('Negotiation\CharsetNegotiator', 'parseHeader', $this->negotiator, [$header]);
+        $accepts = $this->call_private_method(CharsetNegotiator::class, 'parseHeader', $this->negotiator, [$header]);
 
         $this->assertSame($expected, $accepts);
     }
