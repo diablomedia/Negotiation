@@ -2,6 +2,7 @@
 
 namespace Negotiation;
 
+use Negotiation\Exception\Exception;
 use Negotiation\Exception\InvalidArgument;
 use Negotiation\Exception\InvalidHeader;
 
@@ -36,7 +37,7 @@ abstract class AbstractNegotiator
         foreach ($this->parseHeader($header) as $h) {
             try {
                 $acceptedHeaders[] = $this->acceptFactory($h);
-            } catch (Exception\Exception $e) {
+            } catch (Exception $e) {
                 if ($strict) {
                     throw $e;
                 }
@@ -47,9 +48,9 @@ abstract class AbstractNegotiator
             $acceptedPriorities[] = $this->acceptFactory($p);
         }
         $matches         = $this->findMatches($acceptedHeaders, $acceptedPriorities);
-        $specificMatches = array_reduce($matches, 'Negotiation\AcceptMatch::reduce', []);
+        $specificMatches = array_reduce($matches, AcceptMatch::reduce(...), []);
 
-        usort($specificMatches, 'Negotiation\AcceptMatch::compare');
+        usort($specificMatches, AcceptMatch::compare(...));
 
         $match = array_shift($specificMatches);
 
@@ -74,7 +75,7 @@ abstract class AbstractNegotiator
                 $element = $this->acceptFactory($h);
                 $elements[] = $element;
                 $orderKeys[] = [$element->getQuality(), $key, $element->getValue()];
-            } catch (Exception\Exception $e) {
+            } catch (Exception) {
                 // silently skip in case of invalid headers coming in from a client
             }
         }
@@ -144,7 +145,7 @@ abstract class AbstractNegotiator
             throw new InvalidHeader(sprintf('Failed to parse accept header: "%s"', $header));
         }
 
-        return array_values(array_filter(array_map('trim', $matches[0])));
+        return array_values(array_filter(array_map(trim(...), $matches[0])));
     }
 
     /**

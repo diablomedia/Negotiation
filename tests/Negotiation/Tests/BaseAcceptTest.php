@@ -29,7 +29,7 @@ class BaseAcceptTest extends TestCase
 
         // TODO: hack-ish... this is needed because logic in BaseAccept
         //constructor drops the quality from the parameter set.
-        if (false !== strpos($value, 'q')) {
+        if (str_contains($value, 'q')) {
             $parameters['q'] = $accept->getQuality();
         }
 

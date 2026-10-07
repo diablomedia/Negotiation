@@ -2,4 +2,6 @@
 
 namespace Negotiation\Exception;
 
-class InvalidArgument extends \InvalidArgumentException implements Exception {}
+use InvalidArgumentException;
+
+class InvalidArgument extends InvalidArgumentException implements Exception {}

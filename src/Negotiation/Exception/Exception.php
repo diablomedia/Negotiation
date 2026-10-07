@@ -2,4 +2,6 @@
 
 namespace Negotiation\Exception;
 
-interface Exception extends \Throwable {}
+use Throwable;
+
+interface Exception extends Throwable {}

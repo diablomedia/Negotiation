@@ -49,8 +49,8 @@ class Negotiator extends AbstractNegotiator
         }
 
         // Handle "+" segment wildcards
-        list($acceptSub, $acceptPlus) = $this->splitSubPart($acceptSub);
-        list($prioritySub, $priorityPlus) = $this->splitSubPart($prioritySub);
+        [$acceptSub, $acceptPlus] = $this->splitSubPart($acceptSub);
+        [$prioritySub, $priorityPlus] = $this->splitSubPart($prioritySub);
 
         // If no wildcards in either the subtype or + segment, do nothing.
         if (!($acceptBase === '*' || $baseEqual)

@@ -2,6 +2,7 @@
 
 namespace Negotiation\Tests;
 
+use Exception;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Negotiation\Exception\InvalidArgument;
 use Negotiation\Exception\InvalidMediaType;
@@ -23,14 +24,14 @@ class NegotiatorTest extends TestCase
 
     /**
      * @param list<string> $priorities
-     * @param array{string, array<string, string>}|\Exception|null $expected
+     * @param array{string, array<string, string>}|Exception|null $expected
      */
     #[DataProvider('dataProviderForTestGetBest')]
-    public function testGetBest(string $header, array $priorities, array|\Exception|null $expected): void
+    public function testGetBest(string $header, array $priorities, array|Exception|null $expected): void
     {
         try {
             $acceptHeader = $this->negotiator->getBest($header, $priorities);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->assertEquals($expected, $e);
 
             return;
@@ -42,7 +43,7 @@ class NegotiatorTest extends TestCase
             return;
         }
 
-        $this->assertInstanceOf('Negotiation\Accept', $acceptHeader);
+        $this->assertInstanceOf(Accept::class, $acceptHeader);
 
         $this->assertIsArray($expected);
         $this->assertSame($expected[0], $acceptHeader->getType());
@@ -50,7 +51,7 @@ class NegotiatorTest extends TestCase
     }
 
     /**
-     * @return list<array{string, list<string>, array{string, array<string, string>}|\Exception|null}>
+     * @return list<array{string, list<string>, array{string, array<string, string>}|Exception|null}>
      */
     public static function dataProviderForTestGetBest(): array
     {
@@ -111,14 +112,14 @@ class NegotiatorTest extends TestCase
     }
 
     /**
-     * @param list<string>|\Exception|null $expected
+     * @param list<string>|Exception|null $expected
      */
     #[DataProvider('dataProviderForTestGetOrderedElements')]
-    public function testGetOrderedElements(string $header, array|\Exception|null $expected): void
+    public function testGetOrderedElements(string $header, array|Exception|null $expected): void
     {
         try {
             $elements = $this->negotiator->getOrderedElements($header);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->assertEquals($expected, $e);
 
             return;
@@ -130,7 +131,7 @@ class NegotiatorTest extends TestCase
             return;
         }
 
-        $this->assertInstanceOf('Negotiation\Accept', $elements[0]);
+        $this->assertInstanceOf(Accept::class, $elements[0]);
 
         $this->assertIsArray($expected);
         foreach ($expected as $key => $item) {
@@ -139,7 +140,7 @@ class NegotiatorTest extends TestCase
     }
 
     /**
-     * @return list<array{string, list<string>|\Exception|null}>
+     * @return list<array{string, list<string>|Exception|null}>
      */
     public static function dataProviderForTestGetOrderedElements(): array
     {
@@ -167,13 +168,13 @@ class NegotiatorTest extends TestCase
     public function testGetBestRespectsQualityOfSource(): void
     {
         $accept = $this->negotiator->getBest('text/html,text/*;q=0.7', ['text/html;q=0.5', 'text/plain;q=0.9']);
-        $this->assertInstanceOf('Negotiation\Accept', $accept);
+        $this->assertInstanceOf(Accept::class, $accept);
         $this->assertEquals('text/plain', $accept->getType());
     }
 
     public function testGetBestInvalidMediaType(): void
     {
-        $this->expectException(\Negotiation\Exception\InvalidMediaType::class);
+        $this->expectException(InvalidMediaType::class);
         $header = 'sdlfkj20ff; wdf';
         $priorities = ['foo/qwer'];
 
@@ -186,7 +187,7 @@ class NegotiatorTest extends TestCase
     #[DataProvider('dataProviderForTestParseHeader')]
     public function testParseHeader(string $header, array $expected): void
     {
-        $accepts = $this->call_private_method('Negotiation\Negotiator', 'parseHeader', $this->negotiator, [$header]);
+        $accepts = $this->call_private_method(Negotiator::class, 'parseHeader', $this->negotiator, [$header]);
 
         $this->assertSame($expected, $accepts);
     }
@@ -218,7 +219,7 @@ class NegotiatorTest extends TestCase
     {
         $neg = new Negotiator();
 
-        $matches = $this->call_private_method('Negotiation\Negotiator', 'findMatches', $neg, [$headerParts, $priorities]);
+        $matches = $this->call_private_method(Negotiator::class, 'findMatches', $neg, [$headerParts, $priorities]);
 
         $this->assertEquals($expected, $matches);
     }
